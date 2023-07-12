@@ -1,3 +1,7 @@
+const gameplayContainer = document.getElementById("gameplay");
+const messages = document.getElementById("messages");
+const startButton = document.getElementById("start");
+const welcomeContainer = document.getElementById("welcome-container");
 const timer = document.querySelector('.countdown-timer');
 const buttonContainer = document.querySelector('.button-container');
 const resultContainer = document.querySelector('.result-container');
@@ -8,9 +12,9 @@ const smallaText = document.querySelector('.smalla-text');
 const buttonIds = ['A', 'B12', 'C', 'Zinc', 'Magnesium', 'Omega3'];
 const smallaIds = ['Eyesight', 'Tiredness', 'Immune', 'Hairloss', 'Heart', 'Bones'];
 const shownSmallas = [];
-const FULL_TIMER = 5000;
+const FULL_TIMER = 3000;
 const WEEKS_DIVIDER = Math.ceil(FULL_TIMER/104);
-const ROUNDS = 3;
+const ROUNDS = 4;
 
 let countdown;
 let startTime;
@@ -25,6 +29,7 @@ let clickedButtonId='';
 let isTimerOn = false;
 
 function startTimer() {
+  
   clickedButtonId='';
   isTimerOn = true;
   let timeRemaining = FULL_TIMER; // 3 seconds in milliseconds
@@ -46,9 +51,15 @@ function startTimer() {
   buttonIds.splice(currentRandom,1);
 
   smallaText.textContent = currentSmalla;
-  smallaContainer.style.display = 'block';
-  timer.style.display = 'block';
-  buttonContainer.style.display = 'block'; 
+
+  resultContainer.style.display = 'none';
+  messages.style.display = 'none'
+  gameplayContainer.style.display = 'block';
+
+  // gilc
+  //smallaContainer.style.display = 'block';
+  //timer.style.display = 'block';
+  //buttonContainer.style.display = 'block'; 
 
 
   countdown = setInterval(() => {
@@ -71,22 +82,24 @@ function startTimer() {
   }, 10);
 }
 
-
 function showResult(milliseconds) {
 
   let currentWeeks = (FULL_TIMER-milliseconds)/WEEKS_DIVIDER;
   resultText.textContent = Math.ceil(currentWeeks);
   totalWeeks = totalWeeks + Math.ceil(currentWeeks);
-
+  
   resultContainer.style.display = 'block';
+
   console.log('totalWeeks: '+totalWeeks);
   console.log('====================================')
 
   setTimeout(() => {
   
-    resultContainer.style.display = 'none';
-    timer.style.display = 'none';
-    buttonContainer.style.display = 'none';
+    //gilc
+    //resultContainer.style.display = 'none';
+    //timer.style.display = 'none';
+    //buttonContainer.style.display = 'none';
+    gameplayContainer.style.display = 'none';
 
     if (clickedButtonId!='') {
       const clickedButton = document.getElementById(clickedButtonId);
@@ -96,7 +109,9 @@ function showResult(milliseconds) {
   // Still playing
   if (round < ROUNDS)  {
     round = round + 1;
-    smallaText.textContent = 'Round '+round+': Ready?';
+    
+    messages.textContent = 'Round '+round+': Ready?';
+    messages.style.display = 'block'
     
     setTimeout(() => {
       startTimer();
@@ -118,56 +133,56 @@ function showResult(milliseconds) {
       endText = 38+weeksInteger;
     }
 
-    smallaText.textContent = "You're 38 but look like "+endText;
-    buttonContainer.style.display = 'none';
+    // gilc
+    //smallaText.textContent = "You're 38 but look like "+endText;
+    //buttonContainer.style.display = 'none';
+    messages.textContent = "You're 38 but look like "+endText;
+    messages.style.display = 'block'
    
   }
 }, 2000);
 
 }
 
-    buttons.forEach((button) => {
-      button.addEventListener('click', (event) => {
+buttons.forEach((button) => {
+  button.addEventListener('click', (event) => {
 
-        if (isTimerOn) {
-          isTimerOn = false;
-          currentEvent = event;
-          clickedButtonId = event.target.id;
-          console.log('clicked: '  + clickedButtonId); 
-          clearInterval(countdown);
+    if (isTimerOn) {
+      isTimerOn = false;
+      currentEvent = event;
+      clickedButtonId = event.target.id;
+      console.log('clicked: '  + clickedButtonId); 
+      clearInterval(countdown);
 
-          if (currentID == clickedButtonId) {
-            console.log('same');
-            event.target.style.backgroundColor = 'green';
-            resultContainer.style.color = 'green';
-            showResult(endTime - Date.now());
-          } else {
-            console.log('nope');
-            event.target.style.backgroundColor = 'red';
-            resultContainer.style.color = 'red';
-            showResult(0);
-          }
+      if (currentID == clickedButtonId) {
+        console.log('same');
+        event.target.style.backgroundColor = 'green';
+        resultContainer.style.color = 'green';
+        showResult(endTime - Date.now());
+      } else {
+        console.log('nope');
+        event.target.style.backgroundColor = 'red';
+        resultContainer.style.color = 'red';
+        showResult(0);
+      }
+    }
+  });
+});
 
-        } else {
-        }
-
-        
-
-      });
-    });
-
+startButton.addEventListener('click', (event) => {
+  startGame();  
+});
 
 function startGame() {
-  
-    smallaText.textContent = 'Round '+round+': Ready?';
-    smallaContainer.style.display = 'block';
-    buttonContainer.style.display = 'none'
+  welcomeContainer.style.display = 'none';
+  messages.textContent = 'Round '+round+': Ready?';
+  messages.style.display = 'block'
 
     setTimeout(() => {
-      buttonContainer.style.display = 'block'      
       startTimer();
     }, 2000);  
+    
 }
 
-startGame();
+
 

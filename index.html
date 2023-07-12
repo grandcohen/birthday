@@ -9,27 +9,43 @@
 </head>
 <body>
 <div id="container">
-
-  <div class="timer-container">
-    <div class="smalla-container" style="display: none;">
-      <span class="smalla-text"></span>
-    </div>
-    <div class="countdown-timer"></div>
-    <div class="result-container" style="display: none;">
-      + <span class="result-text"></span> weeks.
-    </div>
+  <div id="welcome-container">
+    <span class="welcome-text">Gil is getting old and has to take his supplements.</span><br>
+    <span class="welcome-text">Each round try to match the suppliment to his issue</span>
+    <button class="welcome-button" id="start">Start</button>
   </div>
+  
 
-  <div class="button-container" style="display: none;">
-    <div class="row">
-      <button id="A" class="button button-regular">A</button>
-      <button id="B12" class="button button-regular">B12</button>
-      <button id="C" class="button">C</button>
+  <h2 id="messages" style="display: none;">
+  </h2>
+
+
+  <div id="gameplay" style="display: none;">
+      
+    <div class="timer-container">
+      <div class="smalla-container">
+        <h5>problem:</h5>
+        <span class="smalla-text"></span>
+      </div>
+
+      <div class="countdown-timer"></div>
+
+      <div class="result-container">
+        + <span class="result-text"></span> weeks.
+      </div>
     </div>
-    <div class="row">
-      <button id="Zinc" class="button button-regular">Zinc</button>
-      <button id="Magnesium" class="button button-regular">Magnesium</button>
-      <button id="Omega3" class="button">Omega 3</button>
+
+    <div class="button-container">
+      <div class="row">
+        <button id="A" class="button button-regular">A</button>
+        <button id="B12" class="button button-regular">B12</button>
+        <button id="C" class="button">C</button>
+      </div>
+      <div class="row">
+        <button id="Zinc" class="button button-regular">Zinc</button>
+        <button id="Magnesium" class="button button-regular">Magnesium</button>
+        <button id="Omega3" class="button">Omega 3</button>
+      </div>
     </div>
   </div>
 </div>
