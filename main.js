@@ -48,6 +48,7 @@ function startTimer() {
   smallaText.textContent = currentSmalla;
   smallaContainer.style.display = 'block';
   timer.style.display = 'block';
+  buttonContainer.style.display = 'block'; 
 
 
   countdown = setInterval(() => {
@@ -71,11 +72,6 @@ function startTimer() {
 }
 
 
-function showResultsInit() {
-
-}
-
-
 function showResult(milliseconds) {
 
   let currentWeeks = (FULL_TIMER-milliseconds)/WEEKS_DIVIDER;
@@ -90,6 +86,7 @@ function showResult(milliseconds) {
   
     resultContainer.style.display = 'none';
     timer.style.display = 'none';
+    buttonContainer.style.display = 'none';
 
     if (clickedButtonId!='') {
       const clickedButton = document.getElementById(clickedButtonId);
@@ -99,7 +96,7 @@ function showResult(milliseconds) {
   // Still playing
   if (round < ROUNDS)  {
     round = round + 1;
-    smallaText.textContent = 'Ready?';
+    smallaText.textContent = 'Round '+round+': Ready?';
     
     setTimeout(() => {
       startTimer();
@@ -162,7 +159,7 @@ function showResult(milliseconds) {
 
 function startGame() {
   
-    smallaText.textContent = 'Ready?';
+    smallaText.textContent = 'Round '+round+': Ready?';
     smallaContainer.style.display = 'block';
     buttonContainer.style.display = 'none'
 
