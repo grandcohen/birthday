@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vitamin Match Game</title>
+  <style>
+    :root {
+      --accent: #5364D9; /*blue*/
+      --bg: #fce4b3; /*yellowish*/
+    }
+
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      text-align: center;
+      background: black;
+    }
+    .screen { display: none; 
+              padding: 20px;               
+              width: 400px;
+              height: 600px;
+              margin: 0 auto;
+              border-radius: 10px;        
+              background: var(--bg);
+              /*background-image: linear-gradient(to bottom, #52BCEF, #429AC4);*/
+              /*background-size: cover;*/
+    }
+    .active { display: block; }
+    .header {
+      background: #f4511e;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .issue-box {
+      background: white;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 20px;
+      width: 80%;
+      position: relative;
+    }
+    .face-img { 
+      transform: scale(0.45); 
+    }
+    .face-img-box { 
+      height: 170px;
+      margin: 0px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .button {
+      padding-bottom: 10px;
+      padding-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--accent);
+      background: white;
+      border-color: var(--accent);
+      border-width: 2px;
+      border-radius: 10px;
+    }
+    .button-general {
+      width: 200px; 
+    }
+    .button:hover {
+      background-color: var(--accent);
+      color: white;
+    }
+    .button:active {
+      background-color: var(--accent);
+      color: white;
+    }
+    .overlay {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px 40px;
+      border-radius: 10px;
+      font-size: 24px;
+      display: none;
+    }
+    .correct { background: #c8facc; color: green; }
+    .wrong { background: #ffd0d0; color: red; }
+    .timeout { background: #ffe2b3; color: #e65100; }
+    .end-score {
+      font-size: 18px;
+    }
+
+    /* For screens smaller than 768px (mobile devices) */
+    @media (max-width: 767px) {
+      body {
+        background-color: #000000;
+      }
+
+      #container {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+        overflow-x: hidden;
+        padding-bottom: 10px;
+      }
+    }
+
+}
+  </style>
+</head>
+<body>
+
+  <!-- info -->
+  <div id="info" class="screen active">
+    <h2>Gil is getting old: The game</h2>
+    <p style="text-align: left;">
+        Gil is getting old.<br>
+        Really old.<br>
+        He already makes an umf sound when sitting on the couch and cracks a knee every time he bends over. Yeah… brutal.<br>
+        To keep himself from falling apart, he has to take his supplements and fight off the signs of aging.<br>
+        Unfortunately, his memory isn’t what it used to be — he can’t quite remember which supplement goes with which problem.<br><br>
+
+        Help him match the right supplement to the right issue.<br><br>
+    </p>
+    <button class="button button-general" id="button-next">Next</div>
+  </div>
+
+  <!-- guide -->
+  <div id="guide" class="screen">
+    <p style="text-align: left;">
+        Here are the list of issues and their corresponding supplements:<br><br>
+
+        A - Poor vision<br>
+        B12 - Fatigue<br>
+        C - Damaged Skin<br>
+        D - Low Immunity<br>
+        E - Balance Problems<br>
+        Iron - Anemia<br>
+        Calcium - Weak Bones<br>
+        Magnesium - Rapid Heartbeat<br>
+        Omega 3 - Joint Pain<br>
+        Zinc - Hair Loss<br>
+    </p>
+    <button class="button button-general" id="button-start">Start</div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game" class="screen">
+    <div class="header">
+      <div id="round">#1</div>
+      <div><img src="timer_icon.png" style="height: 20px; vertical-align: middle;"> <span id="timer">04.00</span></div>
+    </div>
+    <div class="issue-box">
+      <div style="color: #f4511e; font-weight: bold;">The issue</div>
+      <h2 id="issue-name">Hair loss</h2>
+      <div class="issue-img-box face-img-box">
+        <img id="issue-img" class="issue-img face-img" src="Hair loss.png" alt="" />
+      </div>
+    </div>
+    <div style="font-weight: bold; margin-bottom: 10px;">What should he take?</div>
+    <div class="buttons" id="vitamin-buttons"></div>
+    <div id="result-overlay" class="overlay"></div>
+  </div>
+
+  <!-- End Screen -->
+  <div id="end" class="screen">
+    <h1>Result</h1>
+    <div id="end-score" class="end-score">0/5</div>
+    <div class="end-img-box face-img-box">
+      <img id="end-img" class="end-img face-img" src="ok.png" alt="" />
+    </div>
+    <button class="button button-general" id="button-again">Start Over</button>
+  </div>
+
+  <script>
+    const issues = {
+      "Poor vision": "A",
+      "Fatigue": "B12",
+      "Damaged Skin": "C",
+      "Low Immunity": "D",
+      "Balance Problems": "E",
+      "Anemia": "Iron",
+      "Weak Bones": "Calcium",
+      "Rapid Heartbeat": "Magnesium",
+      "Joint Pain": "Omega 3",
+      "Hair Loss": "Zinc"
+    };
+
+    const allSupplements = ["A", "B12", "C", "D", "E", "Iron", "Calcium", "Magnesium", "Omega 3", "Zinc"];
+
+    const roundsTotal = 5;
+    let currentRound = 0;
+    let correctAnswers = 0;
+    let issueList = [];
+    let timerInterval;
+    let timerStart;
+    let resultLocked = false;
+
+
+    const gameScreen = document.getElementById("game");
+    const endScreen = document.getElementById("end");
+    const infoScreen = document.getElementById("info");
+    const guideScreen = document.getElementById("guide");
+    const roundEl = document.getElementById("round");
+    const timerEl = document.getElementById("timer");
+    const issueNameEl = document.getElementById("issue-name");
+    const issueImgEl = document.getElementById("issue-img");
+    const buttonsEl = document.getElementById("vitamin-buttons");
+    const overlayEl = document.getElementById("result-overlay");
+    const scoreEl = document.getElementById("end-score");
+    const endImgEl = document.getElementById("end-img");
+    const btnGuideStart = document.getElementById("button-start");
+    const btnInfoNext = document.getElementById("button-next");
+    const btnEndAgain = document.getElementById("button-again");
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function startGame() {
+      issueList = shuffle(Object.keys(issues)).slice(0, roundsTotal);
+      currentRound = 0;
+      correctAnswers = 0;
+      nextRound();
+    }
+
+    function nextRound() {
+      if (currentRound >= roundsTotal) return showEnd();
+
+      resultLocked = false;
+      const issue = issueList[currentRound];
+      const correct = issues[issue];
+
+      roundEl.textContent = `#${currentRound + 1}`;
+      issueNameEl.textContent = issue;
+      issueImgEl.src = `${issue}.png`;
+
+      const choices = shuffle([...allSupplements].filter(s => s !== correct).slice(0, 5).concat(correct));
+      const shuffled = shuffle(choices);
+
+      buttonsEl.innerHTML = "";
+      shuffled.forEach(supplement => {
+        const btn = document.createElement("button");
+        btn.className = "button";
+        btn.textContent = supplement;
+        btn.onclick = () => {
+          if (!resultLocked) handleAnswer(supplement, correct);
+        };
+        buttonsEl.appendChild(btn);
+      });
+
+      startTimer(() => handleAnswer(null, correct, true));
+    }
+
+    function startTimer(onEnd) {
+      clearInterval(timerInterval);
+      timerStart = Date.now();
+      const duration = 4000;
+
+      timerInterval = setInterval(() => {
+        const elapsed = Date.now() - timerStart;
+        const left = Math.max(0, duration - elapsed);
+        timerEl.textContent = (left / 1000).toFixed(2);
+
+        if (left <= 0) {
+          clearInterval(timerInterval);
+          onEnd();
+        }
+      }, 50);
+    }
+
+    function handleAnswer(answer, correct, timeout = false) {
+      clearInterval(timerInterval);
+      resultLocked = true;
+      const isCorrect = answer === correct;
+
+      if (timeout) showOverlay("Time's Up!", "timeout");
+      else if (isCorrect) {
+        correctAnswers++;
+        showOverlay("Correct!", "correct");
+      } else showOverlay("Nope!", "wrong");
+
+      setTimeout(() => {
+        overlayEl.style.display = "none";
+        currentRound++;
+        nextRound();
+      }, 2000);
+    }
+
+    function showOverlay(text, type) {
+      overlayEl.textContent = text;
+      overlayEl.className = `overlay ${type}`;
+      overlayEl.style.display = "block";
+    }
+
+    function showEnd() {
+      gameScreen.classList.remove("active");
+      endScreen.classList.add("active");
+
+      const birthDate = new Date(1985, 6, 29); // July is month 6 (zero-based index)
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const hasHadBirthdayThisYear = (today.getMonth() > 6 || (today.getMonth() === 6 && today.getDate() >= 29));
+      if (!hasHadBirthdayThisYear) age--;
+
+      const mistakes = roundsTotal - correctAnswers;
+      const perceivedAge = age + mistakes * 2;
+
+      scoreEl.innerHTML = 
+        `You got ${correctAnswers}/${roundsTotal} answers correct.<br>                     
+        Gil might be ${age}<br>
+                             but you made him look like he's ${perceivedAge}`;
+
+      if (mistakes>0) {
+        endImgEl.src = `bad.png`;
+      }
+    }
+
+
+    btnInfoNext.addEventListener('click', (event) => {  
+      infoScreen.classList.remove("active");
+      guideScreen.classList.add("active");
+    });
+
+    btnGuideStart.addEventListener('click', (event) => {  
+      guideScreen.classList.remove("active");
+      gameScreen.classList.add("active");
+      startGame();
+    });
+
+    btnEndAgain.addEventListener('click', (event) => {  
+      endScreen.classList.remove("active");
+      guideScreen.classList.add("active");
+    });
+
+  </script>
+</body>
+</html>
