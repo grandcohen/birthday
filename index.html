@@ -16,15 +16,17 @@
       text-align: center;
       background: black;
     }
-    .screen { display: none; 
-              padding: 20px;               
-              width: 400px;
-              height: 600px;
-              margin: 0 auto;
-              border-radius: 10px;        
-              background: var(--bg);
-              /*background-image: linear-gradient(to bottom, #52BCEF, #429AC4);*/
-              /*background-size: cover;*/
+
+    .screen { 
+      display: none; 
+      padding: 20px;               
+      width: 400px;
+      height: 600px;
+      margin: 0 auto;
+      border-radius: 10px;        
+      background: var(--bg);
+      /*background-image: linear-gradient(to bottom, #52BCEF, #429AC4);*/
+      /*background-size: cover;*/
     }
     .active { display: block; }
     .header {
@@ -79,10 +81,12 @@
       background-color: var(--accent);
       color: white;
     }
+    /*
     .button:active {
       background-color: var(--accent);
       color: white;
     }
+    */
     .overlay {
       position: absolute;
       top: 40%;
@@ -107,7 +111,7 @@
         background-color: #000000;
       }
 
-      #container {
+      .screen {
         width: 100vw;
         height: 100vh;
         margin: 0;
@@ -207,6 +211,7 @@
     let timerInterval;
     let timerStart;
     let resultLocked = false;
+    let timeOuts = 0;
 
 
     const gameScreen = document.getElementById("game");
@@ -233,6 +238,7 @@
       issueList = shuffle(Object.keys(issues)).slice(0, roundsTotal);
       currentRound = 0;
       correctAnswers = 0;
+      timeOuts = 0;
       nextRound();
     }
 
@@ -243,9 +249,10 @@
       const issue = issueList[currentRound];
       const correct = issues[issue];
 
+      issueImgEl.src = `${issue}.png`;
       roundEl.textContent = `#${currentRound + 1}`;
       issueNameEl.textContent = issue;
-      issueImgEl.src = `${issue}.png`;
+      
 
       const choices = shuffle([...allSupplements].filter(s => s !== correct).slice(0, 5).concat(correct));
       const shuffled = shuffle(choices);
@@ -286,7 +293,10 @@
       resultLocked = true;
       const isCorrect = answer === correct;
 
-      if (timeout) showOverlay("Time's Up!", "timeout");
+      if (timeout) {
+        showOverlay("Time's Up!", "timeout");
+        timeOuts++;
+      }
       else if (isCorrect) {
         correctAnswers++;
         showOverlay("Correct!", "correct");
@@ -316,15 +326,19 @@
       if (!hasHadBirthdayThisYear) age--;
 
       const mistakes = roundsTotal - correctAnswers;
-      const perceivedAge = age + mistakes * 2;
-
-      scoreEl.innerHTML = 
-        `You got ${correctAnswers}/${roundsTotal} answers correct.<br>                     
-        Gil might be ${age}<br>
-                             but you made him look like he's ${perceivedAge}`;
+      const perceivedAge = age + mistakes * 2 + timeOuts;
 
       if (mistakes>0) {
         endImgEl.src = `bad.png`;
+        scoreEl.innerHTML = 
+        `You got ${correctAnswers}/${roundsTotal} answers correct.<br>                     
+          Gil might be ${age}<br>
+          but you made him look like he's ${perceivedAge}`;
+      } else {
+        scoreEl.innerHTML = 
+        `You got all the answers correct!<br>                     
+          Gil might be ${age}<br>
+          but you made him look no older than ${age-0.5}`;
       }
     }
 
@@ -346,5 +360,6 @@
     });
 
   </script>
+
 </body>
 </html>
